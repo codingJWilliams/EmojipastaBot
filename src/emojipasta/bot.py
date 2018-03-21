@@ -40,6 +40,7 @@ LOG_FILE_PATH = "emojipastabot.log"
 MAX_BYTES_PER_LOG = 5_000_000
 NUM_LOG_FILES_TO_KEEP = 3
 LOG_LEVEL = logging.INFO
+TRANSCRIBER_PHRASE = "human volunteer content transcriber"
 
 LOGGER = logging.getLogger(LOGGER_NAME)
 LOGGER.addHandler(
@@ -107,6 +108,9 @@ class EmojipastaBot:
         if self._subreddit_is_in_blacklist(comment):
             should_reply = False
             LOGGER.info("Subreddit is blacklisted, ignoring.")
+        if TRANSCRIBER_PHRASE in get_text_of_parent(comment):
+            should_reply = False
+            LOGGER.info("Content is a transcription by /r/TranscribersOfReddit. Ignoring")
         got_rate_limited = False
         if should_reply:
             got_rate_limited = self._attempt_reply(comment)
